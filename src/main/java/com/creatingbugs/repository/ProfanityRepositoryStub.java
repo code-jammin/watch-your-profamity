@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,20 +19,21 @@ import java.util.Set;
 public class ProfanityRepositoryStub implements ProfanityRepository {
     private static final Logger log = LoggerFactory.getLogger(ProfanityRepositoryStub.class);
 
-    private Set<Profanity> profanities = new HashSet<>();
+    private List<Profanity> profanities = new ArrayList<>();
 
     public ProfanityRepositoryStub() {
         log.debug("Building stub list of profanities");
 
-        Profanity foo = new Profanity(1L, "foo");
-        Profanity bar = new Profanity(2L, "bar");
-        Profanity shit = new Profanity(3L, "shit");
+        Profanity foo = new Profanity("1", "foo");
+        Profanity bar = new Profanity("2", "bar");
+        Profanity shit = new Profanity("3", "shit");
 
         profanities.add(foo);
         profanities.add(bar);
+        profanities.add(shit);
     }
 
-    public Set<Profanity> getAllProfanity() {
+    public List<Profanity> findAll() {
         log.debug("Returning all profanities");
 
         return profanities;

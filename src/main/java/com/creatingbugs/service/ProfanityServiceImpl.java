@@ -39,7 +39,7 @@ public class ProfanityServiceImpl implements ProfanityService {
     public boolean isStringContainingProfanity(String stringToCheck) {
         log.debug(String.format("Checking whether profanity exists in string: %s", stringToCheck));
 
-        Optional<Profanity> foundProfanity = profanityRepository.getAllProfanity().stream()
+        Optional<Profanity> foundProfanity = profanityRepository.findAll().stream()
                 .filter(profanity -> stringToCheck.toLowerCase().contains(profanity.getWord()))
                 .findFirst();
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,11 +23,11 @@ public class ProfanityRepositoryTest {
 
     /**
      * @verifies return a set of profanity objects stored in the repository
-     * @see ProfanityRepository#getAllProfanity()
+     * @see ProfanityRepository#findAll()
      */
     @Test
-    public void getAllProfanity_shouldReturnASetOfProfanityObjectsStoredInTheRepository() throws Exception {
-        Set<Profanity> profanitySet = profanityRepository.getAllProfanity();
+    public void findAll_shouldReturnASetOfProfanityObjectsStoredInTheRepository() throws Exception {
+        List<Profanity> profanitySet = profanityRepository.findAll();
         Assert.assertTrue(!profanitySet.isEmpty());
     }
 }

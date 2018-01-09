@@ -2,13 +2,13 @@ package com.creatingbugs.service;
 
 import com.creatingbugs.model.Profanity;
 import com.creatingbugs.repository.ProfanityRepository;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
@@ -32,7 +32,7 @@ public class ProfanityServiceTest {
     @Test
     public void isStringContainingProfanity_shouldReturnWhetherTheSuppliedStringContainsProfanity() throws Exception {
         //given
-        Set<Profanity> profanities = profanityRepository.getAllProfanity();
+        List<Profanity> profanities = profanityRepository.findAll();
         String stringToCheck = "foo";
         assertTrue(profanities.stream().anyMatch(profanity -> stringToCheck.contains(profanity.getWord())));
 

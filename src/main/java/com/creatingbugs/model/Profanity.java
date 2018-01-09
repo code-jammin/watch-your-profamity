@@ -1,28 +1,34 @@
 package com.creatingbugs.model;
 
+import org.springframework.data.annotation.Id;
+
 /**
  * A model class to represent an individual word of profanity.
  *
  * Created by steve on 07/01/18.
  */
 public class Profanity {
-    private Long id;
+    @Id private String id;
     private String word;
 
-    public Profanity(Long id) {
-        this.id = id;
+    public Profanity() {
+        
     }
 
-    public Profanity(Long id, String word) {
+    public Profanity(String word) {
+        this.word = word;
+    }
+
+    public Profanity(String id, String word) {
         this.id = id;
         this.word = word;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -32,5 +38,13 @@ public class Profanity {
 
     public void setWord(String word) {
         this.word = word;
+    }
+
+    @Override
+    public String toString() {
+        return "Profanity{" +
+                "id='" + id + '\'' +
+                ", word='" + word + '\'' +
+                '}';
     }
 }

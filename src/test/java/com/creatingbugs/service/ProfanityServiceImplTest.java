@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -42,13 +42,13 @@ public class ProfanityServiceImplTest {
     @Test
     public void isStringContainingProfanity_shouldReturnTrueIfStringToCheckExactlyMatchesAnElementOfProfanity() throws Exception {
         //given
-        Set<Profanity> profanities = new HashSet<>();
-        Profanity fooProfanity = new Profanity(1L, FOO);
-        Profanity barProfanity = new Profanity(2L, BAR);
+        List<Profanity> profanities = new ArrayList<>();
+        Profanity fooProfanity = new Profanity("1", FOO);
+        Profanity barProfanity = new Profanity("2", BAR);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.getAllProfanity()).thenReturn(profanities);
+        when(profanityRepository.findAll()).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity(FOO);
@@ -64,13 +64,13 @@ public class ProfanityServiceImplTest {
     @Test
     public void isStringContainingProfanity_shouldReturnTrueIfProfanityIsContainedAsASubstringOfStringToCheck() throws Exception {
         //given
-        Set<Profanity> profanities = new HashSet<>();
-        Profanity fooProfanity = new Profanity(1L, FOO);
-        Profanity barProfanity = new Profanity(2L, BAR);
+        List<Profanity> profanities = new ArrayList<>();
+        Profanity fooProfanity = new Profanity("1", FOO);
+        Profanity barProfanity = new Profanity("2", BAR);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.getAllProfanity()).thenReturn(profanities);
+        when(profanityRepository.findAll()).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something" + FOO + "something");
@@ -86,13 +86,13 @@ public class ProfanityServiceImplTest {
     @Test
     public void isStringContainingProfanity_shouldReturnFalseIfStringToCheckDoesNotExactlyMatchAnElementOfProfanity() throws Exception {
         //given
-        Set<Profanity> profanities = new HashSet<>();
-        Profanity fooProfanity = new Profanity(1L, FOO);
-        Profanity barProfanity = new Profanity(2L, BAR);
+        List<Profanity> profanities = new ArrayList<>();
+        Profanity fooProfanity = new Profanity("1", FOO);
+        Profanity barProfanity = new Profanity("2", BAR);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.getAllProfanity()).thenReturn(profanities);
+        when(profanityRepository.findAll()).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something");
@@ -108,13 +108,13 @@ public class ProfanityServiceImplTest {
     @Test
     public void isStringContainingProfanity_shouldReturnFalseIfStringToCheckIsNotContainedAsASubstringOfStringToCheck() throws Exception {
         //given
-        Set<Profanity> profanities = new HashSet<>();
-        Profanity fooProfanity = new Profanity(1L, FOO);
-        Profanity barProfanity = new Profanity(2L, BAR);
+        List<Profanity> profanities = new ArrayList<>();
+        Profanity fooProfanity = new Profanity("1", FOO);
+        Profanity barProfanity = new Profanity("2", BAR);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.getAllProfanity()).thenReturn(profanities);
+        when(profanityRepository.findAll()).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something with something else");
@@ -131,9 +131,9 @@ public class ProfanityServiceImplTest {
     @Test
     public void isStringContainingProfanity_shouldReturnFalseIfSetOfProfanityIsEmpty() throws Exception {
         //given
-        Set<Profanity> profanities = new HashSet<>();
+        List<Profanity> profanities = new ArrayList<>();
 
-        when(profanityRepository.getAllProfanity()).thenReturn(profanities);
+        when(profanityRepository.findAll()).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something");
@@ -149,13 +149,13 @@ public class ProfanityServiceImplTest {
     @Test
     public void isStringContainingProfanity_shouldBeCaseInsensitive() throws Exception {
         //given
-        Set<Profanity> profanities = new HashSet<>();
-        Profanity fooProfanity = new Profanity(1L, "a string");
-        Profanity barProfanity = new Profanity(2L, BAR);
+        List<Profanity> profanities = new ArrayList<>();
+        Profanity fooProfanity = new Profanity("1", "a string");
+        Profanity barProfanity = new Profanity("2", BAR);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.getAllProfanity()).thenReturn(profanities);
+        when(profanityRepository.findAll()).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("A STRING");
@@ -171,18 +171,18 @@ public class ProfanityServiceImplTest {
     @Test
     public void isStringContainingProfanity_shouldOnlyCallTheDatabaseOnce() throws Exception {
         //given
-        Set<Profanity> profanities = new HashSet<>();
-        Profanity fooProfanity = new Profanity(1L, FOO);
-        Profanity barProfanity = new Profanity(2L, BAR);
+        List<Profanity> profanities = new ArrayList<>();
+        Profanity fooProfanity = new Profanity("3", FOO);
+        Profanity barProfanity = new Profanity("4", BAR);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.getAllProfanity()).thenReturn(profanities);
+        when(profanityRepository.findAll()).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity(FOO);
 
         //then
-        verify(profanityRepository, times(1)).getAllProfanity();
+        verify(profanityRepository, times(1)).findAll();
     }
 }
