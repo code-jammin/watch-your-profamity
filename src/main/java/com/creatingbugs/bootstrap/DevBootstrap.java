@@ -1,7 +1,7 @@
 package com.creatingbugs.bootstrap;
 
 import com.creatingbugs.model.Profanity;
-import com.creatingbugs.repository.ProfanityRepositoryMongo;
+import com.creatingbugs.repository.ProfanityRepository;
 import com.creatingbugs.repository.ProfanityRepositoryStub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +20,18 @@ import java.util.List;
 public class DevBootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private static final Logger log = LoggerFactory.getLogger(ProfanityRepositoryStub.class);
 
-    private ProfanityRepositoryMongo profanityRepositoryMongo;
+    private ProfanityRepository profanityRepository;
 
-    public DevBootstrap(ProfanityRepositoryMongo profanityRepositoryMongo) {
-        this.profanityRepositoryMongo = profanityRepositoryMongo;
+    public DevBootstrap(ProfanityRepository profanityRepository) {
+        this.profanityRepository = profanityRepository;
     }
 
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         log.debug("Running bootstrap code to initialize data. Resetting database to clean state.");
-        profanityRepositoryMongo.deleteAll();
-        profanityRepositoryMongo.save(getProfanity());
+        profanityRepository.deleteAll();
+        profanityRepository.save(getProfanity());
         logAllProfanity();
     }
 
@@ -53,7 +53,7 @@ public class DevBootstrap implements ApplicationListener<ContextRefreshedEvent> 
 
     private void logAllProfanity() {
         log.debug("Fetching all profanity");
-        List<Profanity> profanityList = profanityRepositoryMongo.findAll();
+        List<Profanity> profanityList = profanityRepository.findAll();
         log.debug("Printing all profanity");
         log.debug("----------------------");
         for(Profanity profanity : profanityList) {

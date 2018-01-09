@@ -1,19 +1,10 @@
 package com.creatingbugs.repository;
 
 import com.creatingbugs.model.Profanity;
-
-import java.util.List;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
- * An interface for a repository for storing profanity objects.
- *
- * Created by steve on 07/01/18.
+ * Created by steve on 08/01/18.
  */
-public interface ProfanityRepository {
-
-    /**
-     * @return all profanity objects stored in the repository
-     * @should return a set of profanity objects stored in the repository
-     */
-    public List<Profanity> findAll();
+public interface ProfanityRepository extends MongoRepository<Profanity, String> {
 }

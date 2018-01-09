@@ -6,9 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A quick and dirty implementation of the profanity repository for prototype purposes.
@@ -16,7 +14,7 @@ import java.util.Set;
  * Created by steve on 07/01/18.
  */
 @Component
-public class ProfanityRepositoryStub implements ProfanityRepository {
+public class ProfanityRepositoryStub {
     private static final Logger log = LoggerFactory.getLogger(ProfanityRepositoryStub.class);
 
     private List<Profanity> profanities = new ArrayList<>();
