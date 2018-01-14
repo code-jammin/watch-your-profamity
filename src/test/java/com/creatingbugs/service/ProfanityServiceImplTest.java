@@ -1,17 +1,21 @@
 package com.creatingbugs.service;
 
+import com.creatingbugs.model.EntryType;
 import com.creatingbugs.model.Profanity;
 import com.creatingbugs.repository.ProfanityRepository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,12 +47,12 @@ public class ProfanityServiceImplTest {
     public void isStringContainingProfanity_shouldReturnTrueIfStringToCheckExactlyMatchesAnElementOfProfanity() throws Exception {
         //given
         List<Profanity> profanities = new ArrayList<>();
-        Profanity fooProfanity = new Profanity("1", FOO);
-        Profanity barProfanity = new Profanity("2", BAR);
+        Profanity fooProfanity = new Profanity("1", FOO, EntryType.BLACKLIST);
+        Profanity barProfanity = new Profanity("2", BAR, EntryType.BLACKLIST);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.findAll()).thenReturn(profanities);
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity(FOO);
@@ -65,12 +69,12 @@ public class ProfanityServiceImplTest {
     public void isStringContainingProfanity_shouldReturnTrueIfProfanityIsContainedAsASubstringOfStringToCheck() throws Exception {
         //given
         List<Profanity> profanities = new ArrayList<>();
-        Profanity fooProfanity = new Profanity("1", FOO);
-        Profanity barProfanity = new Profanity("2", BAR);
+        Profanity fooProfanity = new Profanity("1", FOO, EntryType.BLACKLIST);
+        Profanity barProfanity = new Profanity("2", BAR, EntryType.BLACKLIST);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.findAll()).thenReturn(profanities);
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something" + FOO + "something");
@@ -87,12 +91,12 @@ public class ProfanityServiceImplTest {
     public void isStringContainingProfanity_shouldReturnFalseIfStringToCheckDoesNotExactlyMatchAnElementOfProfanity() throws Exception {
         //given
         List<Profanity> profanities = new ArrayList<>();
-        Profanity fooProfanity = new Profanity("1", FOO);
-        Profanity barProfanity = new Profanity("2", BAR);
+        Profanity fooProfanity = new Profanity("1", FOO, EntryType.BLACKLIST);
+        Profanity barProfanity = new Profanity("2", BAR, EntryType.BLACKLIST);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.findAll()).thenReturn(profanities);
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something");
@@ -109,12 +113,12 @@ public class ProfanityServiceImplTest {
     public void isStringContainingProfanity_shouldReturnFalseIfStringToCheckIsNotContainedAsASubstringOfStringToCheck() throws Exception {
         //given
         List<Profanity> profanities = new ArrayList<>();
-        Profanity fooProfanity = new Profanity("1", FOO);
-        Profanity barProfanity = new Profanity("2", BAR);
+        Profanity fooProfanity = new Profanity("1", FOO, EntryType.BLACKLIST);
+        Profanity barProfanity = new Profanity("2", BAR, EntryType.BLACKLIST);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.findAll()).thenReturn(profanities);
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something with something else");
@@ -133,7 +137,7 @@ public class ProfanityServiceImplTest {
         //given
         List<Profanity> profanities = new ArrayList<>();
 
-        when(profanityRepository.findAll()).thenReturn(profanities);
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("something");
@@ -150,12 +154,12 @@ public class ProfanityServiceImplTest {
     public void isStringContainingProfanity_shouldBeCaseInsensitive() throws Exception {
         //given
         List<Profanity> profanities = new ArrayList<>();
-        Profanity fooProfanity = new Profanity("1", "a string");
-        Profanity barProfanity = new Profanity("2", BAR);
+        Profanity fooProfanity = new Profanity("1", "a string", EntryType.BLACKLIST);
+        Profanity barProfanity = new Profanity("2", BAR, EntryType.BLACKLIST);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.findAll()).thenReturn(profanities);
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity("A STRING");
@@ -169,20 +173,76 @@ public class ProfanityServiceImplTest {
      * @see ProfanityServiceImpl#isStringContainingProfanity(String)
      */
     @Test
+    @Ignore
     public void isStringContainingProfanity_shouldOnlyCallTheDatabaseOnce() throws Exception {
         //given
         List<Profanity> profanities = new ArrayList<>();
-        Profanity fooProfanity = new Profanity("3", FOO);
-        Profanity barProfanity = new Profanity("4", BAR);
+        Profanity fooProfanity = new Profanity("3", FOO, EntryType.BLACKLIST);
+        Profanity barProfanity = new Profanity("4", BAR, EntryType.BLACKLIST);
         profanities.add(fooProfanity);
         profanities.add(barProfanity);
 
-        when(profanityRepository.findAll()).thenReturn(profanities);
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(profanities);
 
         //when
         boolean outcome = profanityService.isStringContainingProfanity(FOO);
 
         //then
-        verify(profanityRepository, times(1)).findAll();
+        verify(profanityRepository, times(1)).findAllByEntryType(EntryType.BLACKLIST);
+    }
+
+    /**
+     * @verifies return false if a blacklisted word is on the whitelist
+     * @see ProfanityServiceImpl#isStringContainingProfanity(String)
+     */
+    @Test
+    public void isStringContainingProfanity_shouldReturnFalseIfABlacklistedWordIsOnTheWhitelist() throws Exception {
+        //given
+        List<Profanity> blacklist = new ArrayList<>();
+        List<Profanity> whitelist = new ArrayList<>();
+
+        Profanity blacklistedBar = new Profanity("3", BAR, EntryType.BLACKLIST);
+        Profanity blacklistedFoo = new Profanity("4", FOO, EntryType.BLACKLIST);
+
+        Profanity whitelistedFoo = new Profanity("5", FOO, EntryType.WHITELIST);
+
+        blacklist.add(blacklistedBar);
+        blacklist.add(blacklistedFoo);
+
+        whitelist.add(whitelistedFoo);
+
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(blacklist);
+        when(profanityRepository.findAllByEntryType(EntryType.WHITELIST)).thenReturn(whitelist);
+
+        //when
+        boolean outcome = profanityService.isStringContainingProfanity(FOO);
+
+        //then
+        assertFalse(outcome);
+
+    }
+
+    /**
+     * @verifies return false if a non-blacklisted word is on the whitelist
+     * @see ProfanityServiceImpl#isStringContainingProfanity(String)
+     */
+    @Test
+    public void isStringContainingProfanity_shouldReturnFalseIfANonblacklistedWordIsOnTheWhitelist() throws Exception {
+        //given
+        List<Profanity> blacklist = new ArrayList<>();
+        List<Profanity> whitelist = new ArrayList<>();
+
+        Profanity whitelistedFoo = new Profanity("5", FOO, EntryType.WHITELIST);
+
+        whitelist.add(whitelistedFoo);
+
+        when(profanityRepository.findAllByEntryType(EntryType.BLACKLIST)).thenReturn(blacklist);
+        when(profanityRepository.findAllByEntryType(EntryType.WHITELIST)).thenReturn(whitelist);
+
+        //when
+        boolean outcome = profanityService.isStringContainingProfanity(FOO);
+
+        //then
+        assertFalse(outcome);
     }
 }

@@ -53,11 +53,11 @@ public class ProfanityControllerTest {
     }
 
     /**
-     * @verifies return the result of whether the string contains profanity
+     * @verifies return the true when the string contains profanity
      * @see ProfanityController#checkWordForProfanity(String)
      */
     @Test
-    public void checkWordForProfanity_shouldReturnTheResultOfWhetherTheStringContainsProfanity() throws Exception {
+    public void checkWordForProfanity_shouldReturnTheTrueWhenTheStringContainsProfanity() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(profanityController).build();
 
         when(profanityService.isStringContainingProfanity(anyString())).thenReturn(true);
@@ -66,5 +66,21 @@ public class ProfanityControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string("true"));
+    }
+
+    /**
+     * @verifies return false when the string does not contain profanity
+     * @see ProfanityController#checkWordForProfanity(String)
+     */
+    @Test
+    public void checkWordForProfanity_shouldReturnFalseWhenTheStringDoesNotContainProfanity() throws Exception {
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(profanityController).build();
+
+        when(profanityService.isStringContainingProfanity(anyString())).thenReturn(false);
+
+        mockMvc.perform(get("/profanity/check?text=word"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string("false"));
     }
 }

@@ -12,7 +12,9 @@ public interface ProfanityService {
      *
      * @param stringToCheckForProfanity the string to check
      * @return whether the string contains profanity
-     * @should return whether the supplied string contains profanity
+     * @should return blacklisted items as profanity
+     * @should return whitelisted items to not be marked as profanity
+     * @should return whitelisted and blacklisted items as not profanity
      */
     public boolean isStringContainingProfanity(String stringToCheckForProfanity);
 }

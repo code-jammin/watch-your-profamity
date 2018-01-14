@@ -1,5 +1,6 @@
 package com.creatingbugs.repository;
 
+import com.creatingbugs.model.EntryType;
 import com.creatingbugs.model.Profanity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,9 @@ public class ProfanityRepositoryStub {
     public ProfanityRepositoryStub() {
         log.debug("Building stub list of profanities");
 
-        Profanity foo = new Profanity("1", "foo");
-        Profanity bar = new Profanity("2", "bar");
-        Profanity shit = new Profanity("3", "shit");
+        Profanity foo = new Profanity("1", "foo", EntryType.BLACKLIST);
+        Profanity bar = new Profanity("2", "bar", EntryType.BLACKLIST);
+        Profanity shit = new Profanity("3", "shit", EntryType.BLACKLIST);
 
         profanities.add(foo);
         profanities.add(bar);

@@ -1,5 +1,6 @@
 package com.creatingbugs.bootstrap;
 
+import com.creatingbugs.model.EntryType;
 import com.creatingbugs.model.Profanity;
 import com.creatingbugs.repository.ProfanityRepository;
 import com.creatingbugs.repository.ProfanityRepositoryStub;
@@ -38,10 +39,10 @@ public class DevBootstrap implements ApplicationListener<ContextRefreshedEvent> 
     private List<Profanity> getProfanity() {
         List<Profanity> profanityList = new ArrayList<>();
 
-        Profanity foo = new Profanity("foo");
-        Profanity bar = new Profanity("bar");
-        Profanity shit = new Profanity("shit");
-        Profanity cock = new Profanity("cock");
+        Profanity foo = new Profanity("1", "foo", EntryType.BLACKLIST);
+        Profanity bar = new Profanity("2","bar", EntryType.BLACKLIST);
+        Profanity shit = new Profanity("3","shit", EntryType.BLACKLIST);
+        Profanity cock = new Profanity("4","cock", EntryType.BLACKLIST);
 
         profanityList.add(foo);
         profanityList.add(bar);

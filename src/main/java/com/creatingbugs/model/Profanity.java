@@ -10,18 +10,15 @@ import org.springframework.data.annotation.Id;
 public class Profanity {
     @Id private String id;
     private String word;
+    private EntryType entryType;
 
     public Profanity() {
-        
     }
 
-    public Profanity(String word) {
-        this.word = word;
-    }
-
-    public Profanity(String id, String word) {
+    public Profanity(String id, String word, EntryType entryType) {
         this.id = id;
         this.word = word;
+        this.entryType = entryType;
     }
 
     public String getId() {
@@ -40,11 +37,20 @@ public class Profanity {
         this.word = word;
     }
 
+    public EntryType getEntryType() {
+        return entryType;
+    }
+
+    public void setEntryType(EntryType entryType) {
+        this.entryType = entryType;
+    }
+
     @Override
     public String toString() {
         return "Profanity{" +
                 "id='" + id + '\'' +
                 ", word='" + word + '\'' +
+                ", entryType='" + entryType.name().toLowerCase() + '\'' +
                 '}';
     }
 }

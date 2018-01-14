@@ -28,7 +28,8 @@ public class ProfanityController {
      * @return whether the string contains profanity
      *
      * @should check the supplied request parameter against the known profanities once
-     * @should return the result of whether the string contains profanity
+     * @should return the true when the string contains profanity
+     * @should return false when the string does not contain profanity
      */
     @GetMapping("check")
     public boolean checkWordForProfanity(@RequestParam("text") String stringToCheck) {
