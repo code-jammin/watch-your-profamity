@@ -44,10 +44,15 @@ public class DevBootstrap implements ApplicationListener<ContextRefreshedEvent> 
         Profanity shit = new Profanity("3","shit", EntryType.BLACKLIST);
         Profanity cock = new Profanity("4","cock", EntryType.BLACKLIST);
 
+        Profanity foo2 = new Profanity("1", "foo", EntryType.WHITELIST);
+        Profanity bar2 = new Profanity("2","bar", EntryType.WHITELIST);
+
         profanityList.add(foo);
         profanityList.add(bar);
         profanityList.add(shit);
         profanityList.add(cock);
+        profanityList.add(foo2);
+        profanityList.add(bar2);
 
         return profanityList;
     }

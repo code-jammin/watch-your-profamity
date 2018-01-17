@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ProfanityServiceImpl implements ProfanityService {
     private static final Logger log = LoggerFactory.getLogger(ProfanityServiceImpl.class);
 
-    ProfanityRepository profanityRepository;
+    private final ProfanityRepository profanityRepository;
 
     public ProfanityServiceImpl(ProfanityRepository profanityRepository) {
         this.profanityRepository = profanityRepository;
@@ -33,6 +33,7 @@ public class ProfanityServiceImpl implements ProfanityService {
      *
      * @param stringToCheck the string to check
      * @return whether the string contains profanity
+     *
      * @should return true if stringToCheck exactly matches an element of profanity
      * @should return true if profanity is contained as a substring of stringToCheck
      * @should return false if stringToCheck does not exactly match an element of profanity
@@ -46,25 +47,49 @@ public class ProfanityServiceImpl implements ProfanityService {
     public boolean isStringContainingProfanity(String stringToCheck) {
         log.debug(String.format("Checking whether profanity exists in string: %s", stringToCheck));
 
-//        Optional<Profanity> foundProfanity = profanityRepository.findAll().stream()
-//                .filter(profanity -> stringToCheck.toLowerCase().contains(profanity.getWord()))
-//                .findFirst();
-
-//        Collection<List<Profanity>> foundProfanity = profanityRepository.findAll().stream()
-//                .collect(Collectors.groupingBy(Profanity::getWord)).values();
-
-        Set<String> blacklist = profanityRepository.findAllByEntryType(EntryType.BLACKLIST).stream()
-                .map(Profanity::getWord).collect(Collectors.toSet());
-        Set<String> whitelist = profanityRepository.findAllByEntryType(EntryType.WHITELIST).stream()
-                .map(Profanity::getWord).collect(Collectors.toSet());
+        Set<String> blacklist = getAllWordsOfType(EntryType.BLACKLIST);
+        Set<String> whitelist = getAllWordsOfType(EntryType.WHITELIST);
 
         blacklist.removeAll(whitelist);
 
-        Set<String> foundProfanity = blacklist.stream()
+        Set<String> foundProfanity = findAllProfanityWithinString(stringToCheck, blacklist);
+
+        return foundProfanity.size() > 0;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     *
+     * @should add new words to the ProfanityRepository
+     * @should check the ProfanityRepository if the word already exists
+     * @should make no changes to the ProfanityRepository if the word already exists
+     */
+    public void addWordToBlacklist(String stringToAdd) {
+
+    }
+
+    /**
+     * Gets all the words of a particular EntryType.
+     *
+     * @param entryType the EntryType to get
+     * @return all words of the provided EntryType
+     */
+    private Set<String> getAllWordsOfType(EntryType entryType) {
+        return profanityRepository.findAllByEntryType(entryType).stream()
+                .map(Profanity::getWord).collect(Collectors.toSet());
+    }
+
+    /**
+     * Finds all occurrences of the provided set of profanity within the provided string.
+     *
+     * @param stringToCheck the string to check for profanity items
+     * @param blacklist the blacklist against which to check for the string entries
+     * @return all occurring profanity words
+     */
+    private Set<String> findAllProfanityWithinString(String stringToCheck, Set<String> blacklist) {
+        return blacklist.stream()
                 .filter(word -> stringToCheck.toLowerCase().contains(word))
                 .collect(Collectors.toSet());
-
-//        return foundProfanity.isPresent();
-        return foundProfanity.size() > 0;
     }
 }

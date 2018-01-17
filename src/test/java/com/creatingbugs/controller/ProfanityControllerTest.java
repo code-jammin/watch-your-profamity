@@ -83,4 +83,44 @@ public class ProfanityControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string("false"));
     }
+
+    /**
+     * @verifies add the provided word to the blacklist
+     * @see ProfanityController#addToBlacklist(String)
+     */
+    @Test
+    public void addToBlacklist_shouldAddTheProvidedWordToTheBlacklist() throws Exception {
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
+
+    /**
+     * @verifies not duplicate existing blacklisted words
+     * @see ProfanityController#addToBlacklist(String)
+     */
+    @Test
+    public void addToBlacklist_shouldNotDuplicateExistingBlacklistedWords() throws Exception {
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
+
+    /**
+     * @verifies return a 400 on non alphabetic words
+     * @see ProfanityController#addToBlacklist(String)
+     */
+    @Test
+    public void addToBlacklist_shouldReturnA400OnNonAlphabeticWords() throws Exception {
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
+
+    /**
+     * @verifies return a 400 on words containing whitespace
+     * @see ProfanityController#addToBlacklist(String)
+     */
+    @Test
+    public void addToBlacklist_shouldReturnA400OnWordsContainingWhitespace() throws Exception {
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
 }

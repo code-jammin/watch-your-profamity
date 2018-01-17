@@ -66,4 +66,24 @@ public class ProfanityServiceTest {
         //then
         assertFalse(outcome);
     }
+
+    /**
+     * @verifies add the provided word to the ProfanityRepository as a blacklisted word
+     * @see ProfanityService#addWordToBlacklist(String)
+     */
+    @Test
+    public void addWordToBlacklist_shouldAddTheProvidedWordToTheProfanityRepositoryAsABlacklistedWord() throws Exception {
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
+
+    /**
+     * @verifies not duplicate existing words
+     * @see ProfanityService#addWordToBlacklist(String)
+     */
+    @Test
+    public void addWordToBlacklist_shouldNotDuplicateExistingWords() throws Exception {
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
 }

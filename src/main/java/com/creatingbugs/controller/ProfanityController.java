@@ -36,4 +36,18 @@ public class ProfanityController {
         log.debug(String.format("Calling ProfanityService to check for profanity in string: %s", stringToCheck));
         return profanityService.isStringContainingProfanity(stringToCheck);
     }
+
+    /**
+     * Add a word to the blacklist.
+     *
+     * @param wordToBlacklist the word to add to the blacklist.
+     *
+     * @should add the provided word to the blacklist
+     * @should return a 400 on non alphabetic words
+     * @should return a 400 on words containing whitespace
+     */
+    @PutMapping("blacklist/add/{word}")
+    public void addToBlacklist(@PathVariable("word") String wordToBlacklist) {
+
+    }
 }

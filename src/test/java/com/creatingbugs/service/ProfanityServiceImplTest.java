@@ -3,9 +3,12 @@ package com.creatingbugs.service;
 import com.creatingbugs.model.EntryType;
 import com.creatingbugs.model.Profanity;
 import com.creatingbugs.repository.ProfanityRepository;
+import com.creatingbugs.util.TestUtil;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -13,12 +16,11 @@ import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by steve on 07/01/18.
@@ -244,5 +246,68 @@ public class ProfanityServiceImplTest {
 
         //then
         assertFalse(outcome);
+    }
+
+    /**
+     * @verifies add new words to the ProfanityRepository
+     * @see ProfanityServiceImpl#addWordToBlacklist(String)
+     */
+    @Test
+    public void addWordToBlacklist_shouldAddNewWordsToTheProfanityRepository() throws Exception {
+        //given
+        String profanityString = "foo";
+
+        when(profanityRepository.findDistinctByWordAndEntryType(any(), any())).thenReturn(null);
+
+        //when
+        profanityService.addWordToBlacklist(profanityString);
+
+        ArgumentCaptor<Profanity> profanityArgumentCaptor = ArgumentCaptor.forClass(Profanity.class);
+
+        //then
+        verify(profanityRepository, times(1)).save(profanityArgumentCaptor.capture());
+        assertTrue(profanityArgumentCaptor.getValue().getWord().equals(profanityString));
+    }
+
+    /**
+     * @verifies check the ProfanityRepository if the word already exists
+     * @see ProfanityServiceImpl#addWordToBlacklist(String)
+     */
+    @Test
+    public void addWordToBlacklist_shouldCheckTheProfanityRepositoryIfTheWordAlreadyExists() throws Exception {
+        //given
+        String profanityString = "foo";
+
+        //when
+        profanityService.addWordToBlacklist(profanityString);
+
+        ArgumentCaptor<String> profanityWordArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<EntryType> entryTypeArgumentCaptor = ArgumentCaptor.forClass(EntryType.class);
+
+        //then
+        verify(profanityRepository, times(1)).findDistinctByWordAndEntryType(profanityWordArgumentCaptor.capture(), entryTypeArgumentCaptor.capture());
+        assertEquals(profanityString, profanityWordArgumentCaptor.getValue());
+        assertEquals(EntryType.BLACKLIST, entryTypeArgumentCaptor.getValue());
+    }
+
+    /**
+     * @verifies make no changes to the ProfanityRepository if the word already exists
+     * @see ProfanityServiceImpl#addWordToBlacklist(String)
+     */
+    @Test
+    public void addWordToBlacklist_shouldMakeNoChangesToTheProfanityRepositoryIfTheWordAlreadyExists() throws Exception {
+        //given
+        String profanityString = "foo";
+        EntryType profanityEntryType = EntryType.BLACKLIST;
+
+        Profanity returnedProfanity = new Profanity("1", profanityString, profanityEntryType);
+
+        when(profanityRepository.findDistinctByWordAndEntryType(any(), any())).thenReturn(returnedProfanity);
+
+        //when
+        profanityService.addWordToBlacklist(profanityString);
+
+        //then
+        verify(profanityRepository, never()).save(any(Profanity.class));
     }
 }
