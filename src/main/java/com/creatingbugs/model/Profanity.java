@@ -8,14 +8,24 @@ import org.springframework.data.annotation.Id;
  * Created by steve on 07/01/18.
  */
 public class Profanity {
-    @Id private final String id;
-    private final String word;
-    private final EntryType entryType;
+    @Id private String id;
+    private String word;
+    private EntryType entryType;
 
     public Profanity(String id, String word, EntryType entryType) {
         this.id = id;
         this.word = word;
         this.entryType = entryType;
+    }
+
+    public Profanity(String word, EntryType entryType) {
+        this.word = word;
+        this.entryType = entryType;
+        id = null;
+    }
+
+    public Profanity() {
+
     }
 
     public String getId() {

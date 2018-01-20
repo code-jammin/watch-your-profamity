@@ -7,9 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,9 +61,16 @@ public class ProfanityServiceImpl implements ProfanityService {
      * @should add new words to the ProfanityRepository
      * @should check the ProfanityRepository if the word already exists
      * @should make no changes to the ProfanityRepository if the word already exists
+     * @should throw WordAlreadyExistsException if word already exists
      */
-    public void addWordToBlacklist(String stringToAdd) {
+    public void addWordToBlacklist(String stringToAdd) throws WordAlreadyExistsException {
+        Profanity profanityToAdd = new Profanity(stringToAdd, EntryType.BLACKLIST);
 
+        if (isWordOfEntryTypeAlreadyExists(profanityToAdd)) {
+            throw new WordAlreadyExistsException(String.format("Word: '%s' already exists on the blacklist", stringToAdd));
+        } else {
+            profanityRepository.save(profanityToAdd);
+        }
     }
 
     /**
@@ -91,5 +95,16 @@ public class ProfanityServiceImpl implements ProfanityService {
         return blacklist.stream()
                 .filter(word -> stringToCheck.toLowerCase().contains(word))
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Checks whether a word of a provided EntryType already exists on the database
+     *
+     * @param profanityToCheck the profanity to check for
+     *
+     * @return whether the word and entrytype combination already exist on the database
+     */
+    private boolean isWordOfEntryTypeAlreadyExists(Profanity profanityToCheck) {
+        return profanityRepository.findDistinctByWordAndEntryType(profanityToCheck.getWord(), profanityToCheck.getEntryType()) != null;
     }
 }

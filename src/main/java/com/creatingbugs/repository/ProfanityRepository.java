@@ -34,4 +34,14 @@ public interface ProfanityRepository extends MongoRepository<Profanity, String> 
      * @should return a Profanity object matching the word of the specified type
      */
     public Profanity findDistinctByWordAndEntryType(String word, EntryType entryType);
+
+    /**
+     * Find all words of a specific entry type
+     *
+     * @param word the word to find
+     * @param entryType the entry type to find
+     *
+     * @return a list of profanity objects that match the supplied word and entry type
+     */
+    public List<Profanity> findAllByWordAndEntryType(String word, EntryType entryType);
 }

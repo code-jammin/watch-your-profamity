@@ -23,8 +23,11 @@ public interface ProfanityService {
      *
      * @param stringToAdd the string to add to the ProfanityRepository
      *
+     * @throws WordAlreadyExistsException when the word already exists
+     *
      * @should add the provided word to the ProfanityRepository as a blacklisted word
-     * @should not duplicate existing words
+     * @should throw WordAlreadyExistsException if word already exists
+     * @should not duplicate existing words on the database
      */
-    void addWordToBlacklist(String stringToAdd);
+    void addWordToBlacklist(String stringToAdd) throws WordAlreadyExistsException;
 }

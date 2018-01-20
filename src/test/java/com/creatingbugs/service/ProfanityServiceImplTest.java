@@ -175,7 +175,6 @@ public class ProfanityServiceImplTest {
      * @see ProfanityServiceImpl#isStringContainingProfanity(String)
      */
     @Test
-    @Ignore
     public void isStringContainingProfanity_shouldOnlyCallTheDatabaseOnce() throws Exception {
         //given
         List<Profanity> profanities = new ArrayList<>();
@@ -305,9 +304,32 @@ public class ProfanityServiceImplTest {
         when(profanityRepository.findDistinctByWordAndEntryType(any(), any())).thenReturn(returnedProfanity);
 
         //when
-        profanityService.addWordToBlacklist(profanityString);
+        try {
+            profanityService.addWordToBlacklist(profanityString);
+        } catch (WordAlreadyExistsException e) {
+            //swallow exception
+        }
 
         //then
         verify(profanityRepository, never()).save(any(Profanity.class));
+    }
+
+    /**
+     * @verifies throw WordAlreadyExistsException if word already exists
+     * @see ProfanityServiceImpl#addWordToBlacklist(String)
+     */
+    @Test(expected = WordAlreadyExistsException.class)
+    public void addWordToBlacklist_shouldThrowWordAlreadyExistsExceptionIfWordAlreadyExists() throws Exception {
+        //given
+        String profanityString = "foo";
+
+        EntryType profanityEntryType = EntryType.BLACKLIST;
+
+        Profanity returnedProfanity = new Profanity("1", profanityString, profanityEntryType);
+
+        when(profanityRepository.findDistinctByWordAndEntryType(any(), any())).thenReturn(returnedProfanity);
+
+        //when
+        profanityService.addWordToBlacklist(profanityString);
     }
 }

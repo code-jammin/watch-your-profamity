@@ -90,8 +90,9 @@ public class ProfanityControllerTest {
      */
     @Test
     public void addToBlacklist_shouldAddTheProvidedWordToTheBlacklist() throws Exception {
-        //TODO auto-generated
-        Assert.fail("Not yet implemented");
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(profanityController).build();
+
+        when(profanityService)
     }
 
     /**
