@@ -1,9 +1,15 @@
 package com.creatingbugs.controller;
 
 import com.creatingbugs.service.ProfanityService;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Pattern;
 
 /**
  * A controller for the profanity endpoints.
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/profanity")
+@Validated
 public class ProfanityController {
     private static final Logger log = LoggerFactory.getLogger(ProfanityController.class);
 
@@ -30,9 +37,14 @@ public class ProfanityController {
      * @should check the supplied request parameter against the known profanities once
      * @should return the true when the string contains profanity
      * @should return false when the string does not contain profanity
+     * @should return a 400 on empty text value
+     * @should return a 400 on missing text value
      */
-    @GetMapping("check")
-    public boolean checkWordForProfanity(@RequestParam("text") String stringToCheck) {
+    @GetMapping(value = "check", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public boolean checkWordForProfanity(
+            @NotBlank(message = "value for 'text' must not be blank")
+            @RequestParam("text") String stringToCheck) {
         log.debug(String.format("Calling ProfanityService to check for profanity in string: %s", stringToCheck));
         return profanityService.isStringContainingProfanity(stringToCheck);
     }
@@ -45,6 +57,7 @@ public class ProfanityController {
      * @should add the provided word to the blacklist
      * @should return a 400 on non alphabetic words
      * @should return a 400 on words containing whitespace
+     * @should return a 400 on empty word value
      */
     @PutMapping("blacklist/add/{word}")
     public void addToBlacklist(@PathVariable("word") String wordToBlacklist) {
