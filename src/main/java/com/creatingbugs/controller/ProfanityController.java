@@ -1,11 +1,14 @@
 package com.creatingbugs.controller;
 
 import com.creatingbugs.service.ProfanityService;
+import com.creatingbugs.service.WordAlreadyExistsException;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,10 +60,18 @@ public class ProfanityController {
      * @should add the provided word to the blacklist
      * @should return a 400 on non alphabetic words
      * @should return a 400 on words containing whitespace
-     * @should return a 400 on empty word value
      */
-    @PutMapping("blacklist/add/{word}")
-    public void addToBlacklist(@PathVariable("word") String wordToBlacklist) {
-
+    @PutMapping(value = "blacklist/add/{word}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ResponseEntity addToBlacklist(
+            @NotBlank(message = "path variable for 'word' must not be blank")
+            @Pattern(regexp = "^[a-zA-Z]+$")
+            @PathVariable("word") String wordToBlacklist) {
+        try {
+            profanityService.addWordToBlacklist(wordToBlacklist);
+        } catch (WordAlreadyExistsException e) {
+            throw new CustomConflictException(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

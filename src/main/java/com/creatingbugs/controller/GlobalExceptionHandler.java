@@ -29,6 +29,14 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map handle(CustomConflictException exception) {
+        return error(exception.getLocalizedMessage());
+    }
+
+
     private Map error(Object message) {
         return Collections.singletonMap("error", message);
     }
