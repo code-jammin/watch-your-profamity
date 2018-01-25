@@ -1,12 +1,13 @@
 package com.creatingbugs.repository;
 
+import com.creatingbugs.model.EntryType;
 import com.creatingbugs.model.Profanity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A quick and dirty implementation of the profanity repository for prototype purposes.
@@ -14,23 +15,24 @@ import java.util.Set;
  * Created by steve on 07/01/18.
  */
 @Component
-public class ProfanityRepositoryStub implements ProfanityRepository {
+public class ProfanityRepositoryStub {
     private static final Logger log = LoggerFactory.getLogger(ProfanityRepositoryStub.class);
 
-    private Set<Profanity> profanities = new HashSet<>();
+    private List<Profanity> profanities = new ArrayList<>();
 
     public ProfanityRepositoryStub() {
         log.debug("Building stub list of profanities");
 
-        Profanity foo = new Profanity(1L, "foo");
-        Profanity bar = new Profanity(2L, "bar");
-        Profanity shit = new Profanity(3L, "shit");
+        Profanity foo = new Profanity("1", "foo", EntryType.BLACKLIST);
+        Profanity bar = new Profanity("2", "bar", EntryType.BLACKLIST);
+        Profanity shit = new Profanity("3", "shit", EntryType.BLACKLIST);
 
         profanities.add(foo);
         profanities.add(bar);
+        profanities.add(shit);
     }
 
-    public Set<Profanity> getAllProfanity() {
+    public List<Profanity> findAll() {
         log.debug("Returning all profanities");
 
         return profanities;

@@ -1,9 +1,18 @@
 package com.creatingbugs.controller;
 
 import com.creatingbugs.service.ProfanityService;
+import com.creatingbugs.service.WordAlreadyExistsException;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Pattern;
 
 /**
  * A controller for the profanity endpoints.
@@ -12,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/profanity")
+@Validated
 public class ProfanityController {
     private static final Logger log = LoggerFactory.getLogger(ProfanityController.class);
 
@@ -28,11 +38,40 @@ public class ProfanityController {
      * @return whether the string contains profanity
      *
      * @should check the supplied request parameter against the known profanities once
-     * @should return the result of whether the string contains profanity
+     * @should return the true when the string contains profanity
+     * @should return false when the string does not contain profanity
+     * @should return a 400 on empty text value
+     * @should return a 400 on missing text value
      */
-    @GetMapping("check")
-    public boolean checkWordForProfanity(@RequestParam("text") String stringToCheck) {
+    @GetMapping(value = "check", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public boolean checkWordForProfanity(
+            @NotBlank(message = "value for 'text' must not be blank")
+            @RequestParam("text") String stringToCheck) {
         log.debug(String.format("Calling ProfanityService to check for profanity in string: %s", stringToCheck));
         return profanityService.isStringContainingProfanity(stringToCheck);
+    }
+
+    /**
+     * Add a word to the blacklist.
+     *
+     * @param wordToBlacklist the word to add to the blacklist.
+     *
+     * @should add the provided word to the blacklist
+     * @should return a 400 on non alphabetic words
+     * @should return a 400 on words containing whitespace
+     */
+    @PutMapping(value = "blacklist/add/{word}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ResponseEntity addToBlacklist(
+            @NotBlank(message = "path variable for 'word' must not be blank")
+            @Pattern(regexp = "^[a-zA-Z]+$")
+            @PathVariable("word") String wordToBlacklist) {
+        try {
+            profanityService.addWordToBlacklist(wordToBlacklist);
+        } catch (WordAlreadyExistsException e) {
+            throw new CustomConflictException(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

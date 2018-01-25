@@ -1,29 +1,20 @@
 package com.creatingbugs.controller;
 
 import com.creatingbugs.service.ProfanityService;
-import com.creatingbugs.util.TestUtil;
-import org.junit.Assert;
+import com.creatingbugs.service.WordAlreadyExistsException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static com.creatingbugs.util.TestUtil.APPLICATION_JSON_UTF8;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
 
 /**
- * Created by steve on 07/01/18.
+ * Created by steve on 25/01/18.
  */
 public class ProfanityControllerTest {
-
     ProfanityController profanityController;
 
     @Mock
@@ -53,18 +44,58 @@ public class ProfanityControllerTest {
     }
 
     /**
-     * @verifies return the result of whether the string contains profanity
+     * @verifies return the true when the string contains profanity
      * @see ProfanityController#checkWordForProfanity(String)
      */
     @Test
-    public void checkWordForProfanity_shouldReturnTheResultOfWhetherTheStringContainsProfanity() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(profanityController).build();
-
+    public void checkWordForProfanity_shouldReturnTheTrueWhenTheStringContainsProfanity() throws Exception {
         when(profanityService.isStringContainingProfanity(anyString())).thenReturn(true);
 
-        mockMvc.perform(get("/profanity/check?text=word"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andExpect(content().string("true"));
+        assertTrue(profanityController.checkWordForProfanity("string"));
     }
+
+    /**
+     * @verifies return false when the string does not contain profanity
+     * @see ProfanityController#checkWordForProfanity(String)
+     */
+    @Test
+    public void checkWordForProfanity_shouldReturnFalseWhenTheStringDoesNotContainProfanity() throws Exception {
+        when(profanityService.isStringContainingProfanity(anyString())).thenReturn(false);
+
+        assertFalse(profanityController.checkWordForProfanity("string"));
+    }
+
+    /**
+     * @verifies add the provided word to the blacklist
+     * @see ProfanityController#addToBlacklist(String)
+     */
+    @Test
+    public void addToBlacklist_shouldAddTheProvidedWordToTheBlacklist() throws Exception {
+        String stringToAdd = "theword";
+
+        doNothing().when(profanityService).addWordToBlacklist(anyString());
+
+        profanityController.addToBlacklist(stringToAdd);
+
+        verify(profanityService, times(1)).addWordToBlacklist(stringToAdd);
+    }
+
+    /**
+     * @verifies not duplicate existing blacklisted words
+     * @see ProfanityController#addToBlacklist(String)
+     */
+    @Test(expected = CustomConflictException.class)
+    public void addToBlacklist_shouldNotDuplicateExistingBlacklistedWords() throws Exception {
+        //given
+        String wordAlreadyExists = "word already exists";
+
+        doThrow(new WordAlreadyExistsException(wordAlreadyExists)).when(profanityService).addWordToBlacklist(anyString());
+
+        //when
+        profanityController.addToBlacklist(wordAlreadyExists);
+
+        //then
+        verify(profanityService, never()).addWordToBlacklist(anyString());
+    }
+
 }
