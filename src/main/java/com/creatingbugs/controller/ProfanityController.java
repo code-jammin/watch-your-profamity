@@ -2,6 +2,10 @@ package com.creatingbugs.controller;
 
 import com.creatingbugs.service.ProfanityService;
 import com.creatingbugs.service.WordAlreadyExistsException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -22,6 +26,7 @@ import javax.validation.constraints.Pattern;
 @RestController
 @RequestMapping("/profanity")
 @Validated
+@Api(value = "profanity", description = "Operations pertaining to checking profanity and managing the profanity lists")
 public class ProfanityController {
     private static final Logger log = LoggerFactory.getLogger(ProfanityController.class);
 
@@ -45,6 +50,11 @@ public class ProfanityController {
      */
     @GetMapping(value = "check", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
+    @ApiOperation(value = "Check whether the supplied string contains any profanity")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully checked whether string contains profanity"),
+            @ApiResponse(code = 400, message = "Empty or missing textvalue")
+    })
     public boolean checkWordForProfanity(
             @NotBlank(message = "value for 'text' must not be blank")
             @RequestParam("text") String stringToCheck) {
@@ -63,6 +73,12 @@ public class ProfanityController {
      */
     @PutMapping(value = "blacklist/add/{word}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
+    @ApiOperation(value = "Add the provided word to the blacklist.", notes = "The word must be alphabetic.", code = 204, response = Void.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successfully added word to blacklist"),
+            @ApiResponse(code = 400, message = "Word does not match required format"),
+            @ApiResponse(code = 409, message = "Word already exists on the blacklist"),
+            })
     public ResponseEntity addToBlacklist(
             @NotBlank(message = "path variable for 'word' must not be blank")
             @Pattern(regexp = "^[a-zA-Z]+$")

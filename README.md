@@ -8,3 +8,9 @@ Example usage will check whether the string 'foo' contains profanity:
 ```
 GET /profanity/check?text=foo 
 ```
+
+## Swagger Docs
+While running the API, you can access the swagger documentation at:
+```
+/swagger-ui.html
+```
