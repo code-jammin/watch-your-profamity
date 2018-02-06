@@ -2,6 +2,7 @@ package com.creatingbugs.repository;
 
 import com.creatingbugs.model.EntryType;
 import com.creatingbugs.model.Profanity;
+import com.creatingbugs.util.TestUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -113,5 +114,48 @@ public class ProfanityRepositoryTest {
         //then
         assertTrue(foundProfanity.getWord().equals(profanityWord));
         assertTrue(foundProfanity.getEntryType().equals(entryTypeOfWord));
+    }
+
+    /**
+     * @verifies delete the word of the specified EntryType and return the deleted Profanity object
+     * @see ProfanityRepository#deleteByWordAndEntryType(String, EntryType)
+     */
+    @Test
+    public void deleteByWordAndEntryType_shouldDeleteTheWordOfTheSpecifiedEntryTypeAndReturnTheDeletedProfanityObject() throws Exception {
+        //given
+        String profanityWord = TestUtil.generateRandomAlphabeticStringOfLength(12);
+        EntryType entryTypeOfWord = EntryType.BLACKLIST;
+
+        Profanity testProfanity = new Profanity(profanityWord, entryTypeOfWord);
+        profanityRepository.save(testProfanity);
+
+        //when
+        List<Profanity> deletedProfanity = profanityRepository.deleteByWordAndEntryType(profanityWord, entryTypeOfWord);
+
+        //then
+        assertTrue(profanityRepository.findAllByWordAndEntryType(profanityWord, entryTypeOfWord).isEmpty());
+        assertEquals(testProfanity, deletedProfanity.get(0));
+
+    }
+
+    /**
+     * @verifies delete all occurrences of the word of the specified EntryType
+     * @see ProfanityRepository#deleteByWordAndEntryType(String, EntryType)
+     */
+    @Test
+    public void deleteByWordAndEntryType_shouldDeleteAllOccurrencesOfTheWordOfTheSpecifiedEntryType() throws Exception {
+        //given
+        String profanityWord = TestUtil.generateRandomAlphabeticStringOfLength(12);
+        String profanityWord2 = new String(profanityWord);
+
+        Profanity testProfanity = new Profanity(profanityWord, EntryType.BLACKLIST);
+        Profanity testProfanity2 = new Profanity(profanityWord2, EntryType.BLACKLIST);
+        profanityRepository.save(testProfanity);
+        profanityRepository.save(testProfanity2);
+
+        //when
+        List<Profanity> deletedProfanity = profanityRepository.deleteByWordAndEntryType(profanityWord, EntryType.BLACKLIST);
+
+        assertEquals(2, deletedProfanity.size());
     }
 }

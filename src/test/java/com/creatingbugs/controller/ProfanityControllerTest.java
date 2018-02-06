@@ -2,6 +2,8 @@ package com.creatingbugs.controller;
 
 import com.creatingbugs.service.ProfanityService;
 import com.creatingbugs.service.WordAlreadyExistsException;
+import com.creatingbugs.service.WordDoesNotExistException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -96,6 +98,33 @@ public class ProfanityControllerTest {
 
         //then
         verify(profanityService, never()).addWordToBlacklist(anyString());
+    }
+
+    /**
+     * @verifies remove the provided word from the blacklist
+     * @see ProfanityController#deleteFromBlacklist(String)
+     */
+    @Test
+    public void deleteFromBlacklist_shouldRemoveTheProvidedWordFromTheBlacklist() throws Exception {
+        //given
+        String wordToDelete = "wordToDelete";
+
+        //when
+        profanityController.deleteFromBlacklist(wordToDelete);
+
+        //then
+        verify(profanityService, times(1)).deleteWordFromBlacklist(wordToDelete);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteFromBlacklist_shouldThrowNotFoundExceptionWhenWordDoesntExist() throws Exception {
+        //given
+        String wordDoesNotExist = "word does not exist";
+
+        doThrow(new WordDoesNotExistException(wordDoesNotExist)).when(profanityService).deleteWordFromBlacklist(wordDoesNotExist);
+
+        //when
+        profanityController.deleteFromBlacklist(wordDoesNotExist);
     }
 
 }

@@ -30,4 +30,16 @@ public interface ProfanityService {
      * @should not duplicate existing words on the database
      */
     void addWordToBlacklist(String stringToAdd) throws WordAlreadyExistsException;
+
+    /**
+     * Attempts to delete the provided word from the ProfanityRepository blacklisted words if it exists.
+     *
+     * @param stringToDelete the string to delete
+     *
+     * @throws WordDoesNotExistException when the word does not exist
+     *
+     * @should delete the provided word from the ProfanityRepository blacklist
+     * @should throw WordDoesNotExistException if the word doesn't exist
+     */
+    void deleteWordFromBlacklist(String stringToDelete) throws WordDoesNotExistException;
 }
