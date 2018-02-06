@@ -2,6 +2,7 @@ package com.creatingbugs.controller;
 
 import com.creatingbugs.service.ProfanityService;
 import com.creatingbugs.service.WordAlreadyExistsException;
+import com.creatingbugs.service.WordDoesNotExistException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -88,6 +89,37 @@ public class ProfanityController {
         } catch (WordAlreadyExistsException e) {
             throw new CustomConflictException(e.getMessage());
         }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * Delete the provided word from the blacklist.
+     *
+     * @param wordToDelete the word to be deleted
+     *
+     * @should remove the provided word from the blacklist
+     * @should return a 404 if the word is not on the blacklist
+     * @should return a 400 on an invalid word
+     */
+    @DeleteMapping(value = "blacklist/delete/{word}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    @ApiOperation(value = "Delete the provided word from the blacklist.", notes = "The word must be alphabetic.", code = 204, response = Void.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successfully deleted word from the blacklist"),
+            @ApiResponse(code = 404, message = "Word does not exist on blacklist")
+    })
+    public ResponseEntity deleteFromBlacklist(
+            @NotBlank(message = "path variable for 'word' must not be blank")
+            @Pattern(regexp = "^[a-zA-Z]+$")
+            @PathVariable("word")
+            String wordToDelete) {
+
+        try {
+            profanityService.deleteWordFromBlacklist(wordToDelete);
+        } catch (WordDoesNotExistException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

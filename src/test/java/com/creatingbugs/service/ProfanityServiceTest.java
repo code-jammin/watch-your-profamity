@@ -4,6 +4,7 @@ import com.creatingbugs.model.EntryType;
 import com.creatingbugs.model.Profanity;
 import com.creatingbugs.repository.ProfanityRepository;
 import com.creatingbugs.util.TestUtil;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by steve on 07/01/18.
@@ -76,12 +75,8 @@ public class ProfanityServiceTest {
     @Test
     public void addWordToBlacklist_shouldAddTheProvidedWordToTheProfanityRepositoryAsABlacklistedWord() throws Exception {
         //given
-        String stringToBlacklist = TestUtil.generateRandomAlphabeticStringOfLength(12);
+        String stringToBlacklist = generateUniqueStringNotCurrentlyBlacklisted();
         EntryType blacklist = EntryType.BLACKLIST;
-
-        while (isProfanityExistOnRepository(stringToBlacklist, blacklist)) {
-            stringToBlacklist = TestUtil.generateRandomAlphabeticStringOfLength(12);
-        }
 
         //when
         profanityService.addWordToBlacklist(stringToBlacklist);
@@ -128,6 +123,54 @@ public class ProfanityServiceTest {
 
         //when
         profanityService.addWordToBlacklist(stringToBlacklist);
+    }
+
+    /**
+     * @verifies delete the provided word from the ProfanityRepository blacklist
+     * @see ProfanityService#deleteWordFromBlacklist(String)
+     */
+    @Test
+    public void deleteWordFromBlacklist_shouldDeleteTheProvidedWordFromTheProfanityRepositoryBlacklist() throws Exception {
+        //given
+        String stringToBlacklist = generateUniqueStringNotCurrentlyBlacklisted();
+        EntryType blacklist = EntryType.BLACKLIST;
+
+        Profanity blacklistedProfanity = new Profanity(stringToBlacklist, blacklist);
+        profanityRepository.save(blacklistedProfanity);
+
+        //when
+        profanityService.deleteWordFromBlacklist(stringToBlacklist);
+
+        //then
+        assertNull(profanityRepository.findDistinctByWordAndEntryType(stringToBlacklist, blacklist));
+    }
+
+    /**
+     * @verifies throw WordDoesNotExistException if the word doesn't exist
+     * @see ProfanityService#deleteWordFromBlacklist(String)
+     */
+    @Test(expected = WordDoesNotExistException.class)
+    public void deleteWordFromBlacklist_shouldThrowWordDoesNotExistExceptionIfTheWordDoesntExist() throws Exception {
+        //given
+        String stringNotCurrentlyBlacklisted = generateUniqueStringNotCurrentlyBlacklisted();
+
+        //when
+        profanityService.deleteWordFromBlacklist(stringNotCurrentlyBlacklisted);
+    }
+
+    /**
+     * Convenience method to generate a string that is confirmed to not exist on the database yet.
+     *
+     * @return an unblacklisted string
+     */
+    private String generateUniqueStringNotCurrentlyBlacklisted() {
+        String stringToBlacklist = TestUtil.generateRandomAlphabeticStringOfLength(12);
+
+        while (isProfanityExistOnRepository(stringToBlacklist, EntryType.BLACKLIST)) {
+            stringToBlacklist = TestUtil.generateRandomAlphabeticStringOfLength(12);
+        }
+
+        return stringToBlacklist;
     }
 
     /**

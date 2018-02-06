@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,12 +66,33 @@ public class ProfanityServiceImpl implements ProfanityService {
      */
     public void addWordToBlacklist(String stringToAdd) throws WordAlreadyExistsException {
         Profanity profanityToAdd = new Profanity(stringToAdd, EntryType.BLACKLIST);
+        log.info(String.format("Attempting to add word: '%s' to the blacklist", stringToAdd));
 
         if (isWordOfEntryTypeAlreadyExists(profanityToAdd)) {
-            throw new WordAlreadyExistsException(String.format("Word: '%s' already exists on the blacklist", stringToAdd));
+            log.error(String.format("Word: '%s' already exists on the blacklist, unable to add", stringToAdd));
+            throw new WordAlreadyExistsException(String.format("Word: '%s' already exists on the blacklist, unable to add", stringToAdd));
         } else {
             profanityRepository.save(profanityToAdd);
+            log.info(String.format("Word: '%s' added successfully to the blacklist", stringToAdd));
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @should delete the word from the ProfanityRepository
+     * @should throw WordDoesNotExistException if the word does not exist
+     */
+    public void deleteWordFromBlacklist(String stringToDelete) throws WordDoesNotExistException {
+        log.info(String.format("Attempting to delete word: '%s' from the blacklist", stringToDelete));
+        List<Profanity> deletedProfanityList = profanityRepository.deleteByWordAndEntryType(stringToDelete, EntryType.BLACKLIST);
+
+        if (deletedProfanityList.isEmpty()) {
+            log.error(String.format("Word '%s' does not exist on the blacklist, unable to delete", stringToDelete));
+            throw new WordDoesNotExistException(String.format("Word '%s' does not exist on the blacklist, unable to delete", stringToDelete));
+        }
+
+        log.info(String.format("Successfully deleted word: '%s' from the blacklist", stringToDelete));
     }
 
     /**

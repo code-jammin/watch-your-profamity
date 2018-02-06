@@ -36,6 +36,13 @@ public class GlobalExceptionHandler {
         return error(exception.getLocalizedMessage());
     }
 
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map handle(NotFoundException exception) {
+        return error(exception.getLocalizedMessage());
+    }
+
 
     private Map error(Object message) {
         return Collections.singletonMap("error", message);

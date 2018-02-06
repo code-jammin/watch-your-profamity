@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -331,5 +332,48 @@ public class ProfanityServiceImplTest {
 
         //when
         profanityService.addWordToBlacklist(profanityString);
+    }
+
+    /**
+     * @verifies delete the word from the ProfanityRepository
+     * @see ProfanityServiceImpl#deleteWordFromBlacklist(String)
+     */
+    @Test
+    public void deleteWordFromBlacklist_shouldDeleteTheWordFromTheProfanityRepository() throws Exception {
+        //given
+        String profanityString = "foo";
+        EntryType profanityEntryType = EntryType.BLACKLIST;
+
+        Profanity profanityToDelete = new Profanity(profanityString, profanityEntryType);
+        List<Profanity> deletedProfanityList = Arrays.asList(profanityToDelete);
+
+        when(profanityRepository.deleteByWordAndEntryType(profanityString, profanityEntryType)).thenReturn(deletedProfanityList);
+
+        //when
+        profanityService.deleteWordFromBlacklist(profanityString);
+
+        //then
+        verify(profanityRepository, times(1)).deleteByWordAndEntryType(profanityString, profanityEntryType);
+    }
+
+    /**
+     * @verifies throw WordDoesNotExistException if the word does not exist
+     * @see ProfanityServiceImpl#deleteWordFromBlacklist(String)
+     */
+    @Test(expected = WordDoesNotExistException.class)
+    public void deleteWordFromBlacklist_shouldThrowWordDoesNotExistExceptionIfTheWordDoesNotExist() throws Exception {
+        //given
+        String profanityString = "foo";
+        EntryType profanityEntryType = EntryType.BLACKLIST;
+
+        List<Profanity> emptyDeletedProfanityList = new ArrayList<>();
+
+        when(profanityRepository.deleteByWordAndEntryType(profanityString, profanityEntryType)).thenReturn(emptyDeletedProfanityList);
+
+        //when
+        profanityService.deleteWordFromBlacklist(profanityString);
+
+        //then
+        verify(profanityRepository, times(1)).deleteByWordAndEntryType(profanityString, profanityEntryType);
     }
 }
